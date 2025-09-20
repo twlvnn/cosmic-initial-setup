@@ -1,19 +1,24 @@
 use crate::fl;
-use bytes::Bytes;
 use cosmic::{
-    Apply, cosmic_theme,
+    cosmic_theme,
     iced::{Alignment, Length},
-    widget::{self, image},
+    widget,
 };
-use std::{any::Any, sync::LazyLock};
+use std::any::Any;
 
-static SCREENSHOT: LazyLock<image::Handle> = LazyLock::new(|| {
-    let embedded_bytes = include_bytes!("../../res/workspaces.png");
-    image::Handle::from_bytes(Bytes::from_static(embedded_bytes))
-});
+static SCREENSHOT: &'static [u8] = include_bytes!("../../res/workspaces.svg");
 
-#[derive(Default)]
-pub struct Page;
+pub struct Page {
+    handle: widget::svg::Handle,
+}
+
+impl Default for Page {
+    fn default() -> Self {
+        Self {
+            handle: widget::svg::Handle::from_memory(SCREENSHOT),
+        }
+    }
+}
 
 impl super::Page for Page {
     fn title(&self) -> String {
@@ -28,21 +33,18 @@ impl super::Page for Page {
         true
     }
 
-    fn view(&self) -> cosmic::Element<super::Message> {
-        let cosmic_theme::Spacing { space_xl, .. } = cosmic::theme::active().cosmic().spacing;
+    fn view(&self) -> cosmic::Element<'_, super::Message> {
+        let cosmic_theme::Spacing { space_s, .. } = cosmic::theme::active().cosmic().spacing;
 
         let description = widget::text::body(fl!("workflow-page", "description"))
             .align_x(cosmic::iced::Alignment::Center)
-            .apply(widget::container)
             .width(Length::Fill);
-
-        let screenshot = widget::image(&*SCREENSHOT);
 
         widget::column::with_capacity(2)
             .push(description)
-            .push(screenshot)
+            .push(widget::svg(self.handle.clone()).width(Length::Fill))
             .align_x(Alignment::Center)
-            .spacing(space_xl)
+            .spacing(space_s)
             .into()
     }
 }

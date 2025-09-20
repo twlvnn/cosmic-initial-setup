@@ -1,8 +1,8 @@
 use crate::fl;
 use cosmic::{
-    Apply, cosmic_theme,
+    cosmic_theme,
     iced::{Alignment, Length},
-    widget::{self, image},
+    widget,
 };
 use kdl::{KdlDocument, KdlValue};
 use std::any::Any;
@@ -144,17 +144,13 @@ impl super::Page for Page {
         cosmic::Task::none()
     }
 
-    fn view(&self) -> cosmic::Element<super::Message> {
+    fn view(&self) -> cosmic::Element<'_, super::Message> {
         let cosmic_theme::Spacing {
-            space_s,
-            space_m,
-            space_xl,
-            ..
+            space_s, space_m, ..
         } = cosmic::theme::active().cosmic().spacing;
 
         let description = widget::text::body(fl!("layout-page", "description"))
             .align_x(cosmic::iced::Alignment::Center)
-            .apply(widget::container)
             .width(Length::Fill);
 
         let mut grid = widget::grid().column_spacing(space_m).row_spacing(space_m);
@@ -177,7 +173,7 @@ impl super::Page for Page {
             .push(widget::container(grid))
             .push(description)
             .align_x(Alignment::Center)
-            .spacing(space_xl)
+            .spacing(space_s)
             .into()
     }
 }

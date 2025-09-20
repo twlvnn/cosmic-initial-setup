@@ -1,4 +1,8 @@
-use cosmic::{Element, cosmic_theme, theme, widget};
+use cosmic::{
+    Element, cosmic_theme,
+    iced::{Alignment, Length},
+    theme, widget,
+};
 
 use crate::{fl, page};
 
@@ -29,13 +33,17 @@ impl page::Page for Page {
         true
     }
 
-    fn view(&self) -> Element<page::Message> {
+    fn view(&self) -> Element<'_, page::Message> {
         let cosmic_theme::Spacing { space_s, .. } = theme::active().cosmic().spacing;
 
         widget::column::with_children(vec![
-            widget::text::body(fl!("launcher-page", "description")).into(),
-            widget::svg(self.handle.clone()).into(),
+            widget::text::body(fl!("launcher-page", "description"))
+                .align_x(cosmic::iced::Alignment::Center)
+                .width(Length::Fill)
+                .into(),
+            widget::svg(self.handle.clone()).width(Length::Fill).into(),
         ])
+        .align_x(Alignment::Center)
         .spacing(space_s)
         .into()
     }

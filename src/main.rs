@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 use std::any::TypeId;
+use std::path::Path;
 
 use cosmic::{
     Application, Apply, Element,
@@ -27,6 +28,12 @@ const GNOME_SETUP_DONE_PATH: &str = ".config/gnome-initial-setup-done";
 /// Runs application with these settings
 #[rustfmt::skip]
 fn main() -> Result<(), Box<dyn std::error::Error>> {
+    if let Some(file_path) = option_env!("DISABLE_IF_EXISTS") {
+        if Path::new(file_path).exists() {
+            return Ok(());
+        }
+    }
+
     #[allow(deprecated)]
     let home_dir = std::env::home_dir().unwrap();
 
@@ -322,14 +329,14 @@ impl Application for App {
         Task::none()
     }
 
-    fn dialog(&self) -> Option<Element<Self::Message>> {
+    fn dialog(&self) -> Option<Element<'_, Self::Message>> {
         self.pages[self.page_i]
             .dialog()
             .map(|dialog| dialog.map(Message::PageMessage))
     }
 
     /// Creates a view after each update.
-    fn view(&self) -> Element<Message> {
+    fn view(&self) -> Element<'_, Message> {
         let cosmic_theme::Spacing {
             space_xxs,
             space_m,
@@ -386,7 +393,7 @@ impl Application for App {
             .view()
             .map(Message::PageMessage)
             .apply(widget::container)
-            .height(406.0);
+            .height(Length::Fill);
 
         widget::column::with_capacity(7)
             .push(widget::Space::with_height(space_xl))
@@ -397,6 +404,7 @@ impl Application for App {
             .push(button_row)
             .push(widget::Space::with_height(space_l))
             .max_width(page.width())
+            .width(page.width())
             .align_x(Alignment::Center)
             .apply(widget::container)
             .center_x(Length::Fill)

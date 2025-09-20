@@ -128,7 +128,7 @@ pub trait Page {
     }
 
     fn width(&self) -> f32 {
-        480.0
+        640.0
     }
 
     fn completed(&self) -> bool {
@@ -143,11 +143,11 @@ pub trait Page {
         false
     }
 
-    fn dialog(&self) -> Option<Element<Message>> {
+    fn dialog(&self) -> Option<Element<'_, Message>> {
         None
     }
 
-    fn view(&self) -> Element<Message> {
+    fn view(&self) -> Element<'_, Message> {
         widget::text::body("TODO").into()
     }
 }

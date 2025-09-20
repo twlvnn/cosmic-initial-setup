@@ -81,15 +81,10 @@ impl page::Page for Page {
             page::Message::from(Message::UpdateDisplayList(Arc::new(list)))
         }));
 
-        // Enable the screen reader on startup.
-        tasks.push(cosmic::Task::done(
-            Message::ScreenReaderEnabled(true).into(),
-        ));
-
         cosmic::task::batch(tasks)
     }
 
-    fn view(&self) -> Element<page::Message> {
+    fn view(&self) -> Element<'_, page::Message> {
         let screen_reader = widget::settings::item::builder(fl!("welcome-page", "screen-reader"))
             .toggler(self.reader_enabled, |enable| {
                 Message::ScreenReaderEnabled(enable).into()
